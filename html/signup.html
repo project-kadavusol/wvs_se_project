@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="grid-container">
+        <div class="login-box">
+            <h2>HECKTO-Sign Up</h2>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% endwith %}
+            <div id="formError"></div>
+            <form action="{{ url_for('signup') }}" method="post" onsubmit="return validateForm()">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Sign Up</button>
+            </form>
+            <p class="switch">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            let email = document.getElementById("email").value.trim();
+            let username = document.getElementById("username").value.trim();
+            let password = document.getElementById("password").value.trim();
+            let errorDiv = document.getElementById("formError");
+
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let usernamePattern = /^[a-zA-Z0-9_]{3,}$/;
+            let passwordPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+           
+            errorDiv.innerText = "";
+            errorDiv.style.display = "none";
+
+            if (!emailPattern.test(email)) {
+                errorDiv.innerText = "Invalid email format!";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            if (!usernamePattern.test(username)) {
+                errorDiv.innerText = "Username must be at least 3 characters (letters, numbers, underscores only)!";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            if (!passwordPattern.test(password)) {
+                errorDiv.innerText = "Password must be at least 6 characters, contain 1 number & 1 special character!";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            return true;
+        }
+
+        setTimeout(function() {
+            let messageContainer = document.querySelector('.flash-messages');
+            if (messageContainer) messageContainer.remove();
+        }, 5000);
+    </script>
+</body>
+</html>

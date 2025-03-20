@@ -1,0 +1,31 @@
+# Heckto - Terms and Conditions
+
+## 1. Acceptance of Terms
+By using Heckto, you agree to abide by these terms and conditions. If you do not agree, please refrain from using our services.
+
+## 2. Ethical Use Policy
+- Heckto is designed for ethical security testing and educational purposes only.
+- Users must have **explicit permission** before scanning any website or application.
+- Unauthorized scanning or exploitation of vulnerabilities is illegal and strictly prohibited.
+
+## 3. Limitation of Liability
+- Heckto provides vulnerability scanning tools on an "as-is" basis.
+- We do not guarantee the accuracy of results and are not liable for any misuse or damage resulting from the use of our tool.
+- Users assume full responsibility for ensuring compliance with applicable laws and regulations.
+
+## 4. Data Privacy
+- We do not collect or store any sensitive user data.
+- Any reports generated during scans are the sole responsibility of the user.
+
+## 5. Prohibited Activities
+Users are strictly prohibited from:
+- Scanning third-party websites without permission.
+- Using Heckto for malicious purposes.
+- Attempting to exploit vulnerabilities found through the platform.
+
+## 6. Modifications to Terms
+We reserve the right to update these terms at any time. Continued use of Heckto constitutes acceptance of any modifications.
+
+## 7. Contact Information
+For any questions or clarifications, please contact our support team.
+

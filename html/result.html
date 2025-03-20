@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HECKTO-WEB VULNERABILITY SCANNER</title>
+        <link rel="stylesheet" href="{{url_for('static',filename='home.css')}}">
+    </head>
+    <body>
+        <header >
+            <h1 style="text-align: left; line-height: 0.5; margin-left: 3%;">HECKTO</h1>
+            <h4 style="text-align: left; margin-left: 3%;">We scan your website for vulnerabilities</h4>
+            
+            <nav style="text-align: right;">
+                <a class="home" href="{{url_for('home')}}">Home</a>
+            </nav>
+        </header>
+        {% if presult or poresult %}
+        <div>
+            <h3>Scan Completed</h3>
+            
+            <!-- Buttons for downloading report and showing result -->
+            <a href="{{ url_for('download_report') }}" class="btn">Download Report</a>
+            <button class="btn" onclick="toggleResult()">Show Result</button>
+            
+            <!-- Scan result (initially hidden) -->
+            <div id="scan-result" style="display: none;">
+                <h3>Scan Result:</h3>
+                <pre>
+                    {% if presult %}
+                        {{ presult }}
+                        
+                    {% endif %}
+                    {% if poresult %}
+                        {{ poresult }}
+                    {% endif %}
+                </pre>
+            </div>
+        </div>
+
+        <script>
+            function toggleResult() {
+                var resultDiv = document.getElementById("scan-result");
+                if (resultDiv.style.display === "none") {
+                    resultDiv.style.display = "block";
+                } else {
+                    resultDiv.style.display = "none";
+                }
+            }
+        </script>
+    {% endif %}
+    
+</body>
+</html>

@@ -1,0 +1,34 @@
+Welcome to Heckto - Your Web Security Companion
+
+Scan. Detect. Secure.
+
+Heckto is a powerful and user-friendly web vulnerability scanning tool designed to help developers and security enthusiasts detect and mitigate common security threats. With just a few clicks, you can identify vulnerabilities like SQL Injection, Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), and File Upload Exploits before attackers exploit them.
+
+Why Choose Heckto?
+
+Comprehensive Scanning: Heckto scans for the most common web vulnerabilities and provides detailed reports.
+
+User-Friendly Interface: Designed for both beginners and professionals, our intuitive UI makes security testing easy.
+
+Real-Time Analysis: Get instant insights into potential threats affecting your web applications.
+
+Open-Source & Community-Driven: Heckto is built for the community, by the community, ensuring continuous improvements.
+
+How It Works
+
+Enter your website URL – Submit the target URL you want to scan.
+
+Run a Security Check – Heckto performs automated vulnerability analysis.
+
+Get a Detailed Report – Receive insights into security gaps and recommended fixes.
+
+Secure Your Website Today!
+
+Don’t wait for an attack—take control of your web security now. Start scanning with Heckto and keep your applications safe!
+
+[Get Started] (Button)
+
+Disclaimer
+
+Heckto is a security tool intended for ethical use only. Please ensure you have explicit permission before scanning any website. Unauthorized testing is illegal and punishable by law.
+

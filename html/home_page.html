@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HECKTO-WEB VULNERABILITY SCANNER</title>
+        <link rel="stylesheet" href="{{url_for('static',filename='home.css')}}">
+    </head>
+    <body>
+        <header >
+            <h1 style="text-align: left; line-height: 0.5; margin-left: 3%;">HECKTO</h1>
+            <h4 style="text-align: left; margin-left: 3%;">We scan your website for vulnerabilities</h4>
+            
+            <nav style="text-align: right;">
+                <a class="home" href="{{url_for('home')}}">Home</a>
+                {% if request.cookies.get('usr') %}
+                    <a class="profile" href="{{url_for('profile')}}">Profile</a>
+                    <a class="logout" href="{{url_for('logout')}}">Logout</a>
+                {% else %}
+                    <a class="login" href="{{url_for('login')}}">Login</a>
+                    <a class="signup" href="{{url_for('signup')}}">Signup</a>
+                {% endif %}
+            </nav>
+        </header>
+        <hr>
+        
+        <form action="scan" method="post">
+            <label for="url">Enter the URL or IP address:</label>
+            <input type="text" name="target" placeholder="www.example123.com or 192.168.1.1" required><br>
+            <input type="submit" value="Scan">
+        </form>
+        {% if error %}
+            {{error}}
+        {% endif %}
+    </body>
+</html>

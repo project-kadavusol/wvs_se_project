@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HECKTO - Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+    <header>
+        <h1 style="text-align: left; line-height: 0.5; margin-left: 3%;">HECKTO</h1>
+        <h4 style="text-align: left; margin-left: 3%;">We scan your website for vulnerabilities</h4>
+        
+        <nav style="text-align: right;">
+            <a class="home" href="{{ url_for('home') }}">Home</a>
+        </nav>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    <div class="profile-container">
+        {% if data %}
+            <h2>Profile</h2>
+            <p><strong>Name:</strong> {{ data.name }}</p>
+            <p><strong>Email:</strong> {{ data.email }}</p>
+
+            <h3>Actions</h3>
+            <a href="#" class="btn" onclick="openPasswordPopup()">Update Password</a>
+            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+            <p id="passwordError" style="color: red; display: none;"></p>
+            <div id="passwordPopup" class="popup" style="display: none;">
+                <h3>Update Password</h3>
+                <form action="{{ url_for('update_password') }}" method="POST" onsubmit="return validatePasswordForm()">
+                    <input type="password" id="old_password" name="old_pass" placeholder="Old Password" required>
+                    <input type="password" id="new_password" name="new_pass" placeholder="New Password" required>
+                    <input type="password" id="confirm_password" name="con_pass" placeholder="Confirm New Password" required>
+                    <button type="submit" class="btn">Update</button>
+                    <button type="button" class="btn cancel" onclick="closePasswordPopup()">Cancel</button>
+                </form>
+                
+            </div>
+
+            <div class="scan_history">
+                <h3>Scan History</h3>
+                {% if scan_history %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Target</th>
+                                <th>Date & Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scan in scan_history %}
+                                <tr>
+                                    <td>{{ scan['target'] }}</td>
+                                    <td>{{ scan['date'].strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('download_scan', filename=scan['filename']) }}" class="btn download-btn">Download</a>
+                                        <a href="{{ url_for('delete_scan', filename=scan['filename']) }}" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this scan?');">Delete</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No scan history found.</p>
+                {% endif %}
+            </div>
+
+        {% else %}
+            <p>Error: User data not found.</p>
+        {% endif %}
+        {% if error %}
+            <script>alert(error)</script>
+        {% endif %}
+    </div>
+
+    <script>
+        function openPasswordPopup() {
+            document.getElementById("passwordPopup").style.display = "block";
+        }
+
+        function closePasswordPopup() {
+            document.getElementById("passwordPopup").style.display = "none";
+        }
+        function validatePasswordForm() {
+            let newPassword = document.getElementById("new_password").value.trim();
+            let confirmPassword = document.getElementById("confirm_password").value.trim();
+            let errorDiv = document.getElementById("passwordError");
+            let passwordPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+
+            errorDiv.innerText = "";
+            errorDiv.style.display = "none";
+
+            if (!passwordPattern.test(newPassword)) {
+                errorDiv.innerText = "Password must be at least 6 characters, contain 1 number & 1 special character!";
+                errorDiv.style.display = "block";
+                return false;
+            }
+
+            if (newPassword !== confirmPassword) {
+                errorDiv.innerText = "Passwords do not match!";
+                errorDiv.style.display = "block";
+                return false;
+            }
+            return true;
+        }
+
+
+        setTimeout(function() {
+            let messageContainer = document.querySelector('.flash-messages');
+            if (messageContainer) messageContainer.remove();
+        }, 5000);
+    </script>
+</body>
+</html>
