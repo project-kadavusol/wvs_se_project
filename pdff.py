@@ -27,5 +27,6 @@ def txt_to_pdf(filename):
         pw.write(file_name)
     
     os.remove(temp_file)
+    os.remove(txt)
 
     return file_name

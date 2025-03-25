@@ -15,7 +15,7 @@
                 <a class="home" href="{{url_for('home')}}">Home</a>
             </nav>
         </header>
-        {% if presult or poresult %}
+        {% if presult or poresult or temp_result %}
         <div>
             <h3>Scan Completed</h3>
             
@@ -24,15 +24,17 @@
             <button class="btn" onclick="toggleResult()">Show Result</button>
             
             <!-- Scan result (initially hidden) -->
-            <div id="scan-result" style="display: none;">
+            <div id="scan-result" style="display: none; font-family: Courier;">
                 <h3>Scan Result:</h3>
                 <pre>
                     {% if presult %}
-                        {{ presult }}
-                        
+                    {{ presult }}
                     {% endif %}
                     {% if poresult %}
-                        {{ poresult }}
+                    {{ poresult }}
+                    {% endif %}
+                    {% if temp_result %}
+                    {{ temp_result }}
                     {% endif %}
                 </pre>
             </div>

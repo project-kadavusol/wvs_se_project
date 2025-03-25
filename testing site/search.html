@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Users</title>
+</head>
+<body>
+    <h2>Search Users</h2>
+    <form method="POST">
+        <input type="text" name="query" placeholder="Enter username">
+        <input type="submit" value="Search">
+    </form>
+
+    {% if results %}
+        <h3>Results:</h3>
+        <ul>
+            {% for user in results %}
+                <li>{{ user[1] }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

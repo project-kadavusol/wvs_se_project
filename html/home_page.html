@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="{{url_for('static',filename='home.css')}}">
     </head>
     <body>
-        <header >
+        <header>
             <h1 style="text-align: left; line-height: 0.5; margin-left: 3%;">HECKTO</h1>
             <h4 style="text-align: left; margin-left: 3%;">We scan your website for vulnerabilities</h4>
             
@@ -23,26 +23,40 @@
             </nav>
         </header>
         <hr>
+        
+        <!-- Are you trying to scan your local host website? -->
+       
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="flash-messages">
                     {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
+                        {{ message }}
                     {% endfor %}
                 </div>
             {% endif %}
-            {% endwith %}
+        {% endwith %}
         
         <form action="scan" method="post">
             <label for="url">Enter the URL or IP address:</label>
             <input type="text" name="target" placeholder="www.example123.com or 192.168.1.1" required><br>
             <input type="submit" value="Scan">
         </form>
-    <script>
-        setTimeout(function() {
-            let messageContainer = document.querySelector('.flash-messages');
-            if (messageContainer) messageContainer.remove();
-        }, 5000);
-    </script>
+        <p style="text-align: center; font-weight: bold; color: red;">
+            Are you trying to scan your localhost website? Download the connection script below!
+        </p>
+        <p style="text-align: center;">
+            <a href="{{ url_for('static', filename='connect.rar') }}" download>
+                <button style="background-color: #56b649; color: white; padding: 10px; border-radius: 10px; cursor: pointer;">
+                    Download Tunnel Script
+                </button>
+            </a>
+        </p>
+
+        <script>
+            setTimeout(function() {
+                let messageContainer = document.querySelector('.flash-messages');
+                if (messageContainer) messageContainer.remove();
+            }, 5000);
+        </script>
     </body>
 </html>

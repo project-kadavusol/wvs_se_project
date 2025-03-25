@@ -31,7 +31,7 @@ def port_scan(target):
             return None
 
     open_ports = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2000) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5000) as executor:
         results = executor.map(scan_port, range(start_port, end_port + 1))
 
     for result in results:
@@ -41,6 +41,12 @@ def port_scan(target):
     if open_ports:
         table_headers = ["PORT", "STATE", "SERVICE"]
         output = tabulate(open_ports, headers=table_headers, tablefmt="grid")
+        
+        # Add tips and alert if more ports are open
+        if len(open_ports) > 5:  # You can adjust the threshold as needed
+            output += "\n\n[!] Alert: Multiple open ports detected!"
+            output += "\n[*] Tip: Ensure that only necessary ports are open to reduce the attack surface."
+            output += "\n[*] Tip: Regularly monitor and audit open ports to maintain security."
     else:
         output = "No open ports found."
 
@@ -49,4 +55,5 @@ def port_scan(target):
 
     return output
 
-"print(port_scan('192.168.200.251'))"
+# Example usage
+"""print(port_scan('192.168.200.251'))"""
