@@ -1,7 +1,7 @@
-from flask import Flask, request, render_template, redirect, url_for,make_response,flash,send_file,Response
-import pymongo,requests
+from flask import Flask, request, render_template, redirect, url_for,make_response,flash,send_file,session
+import pymongo
 from bson import ObjectId
-import test,port,os,pdff,base64,template
+import test,port,os,pdff,base64,template,url_chk
 from datetime import datetime
 from urllib.parse import urlparse
 myclient = pymongo.MongoClient("mongodb+srv://web_vul:web_vul@team20.znx7o.mongodb.net/")
@@ -11,61 +11,105 @@ mycol=mydb["user_data"]
 i_id=''
 app = Flask(__name__, template_folder='.')
 
-app.secret_key="We_are_the only_cyber_team"
+app.secret_key="V2VfYXJlX3RoZSBvbmx5X2N5YmVyX3RlYW0="
 
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
+    # Check if user is already logged in
+    usr = request.cookies.get("usr")
+    if usr:
+        return redirect(url_for('home'))
+    
     if request.method == "POST":
         try:
-            mail=request.form.get("email")
+            mail = request.form.get("email")
             username = request.form.get("username")
             password = request.form.get("password")
-            mydict={"email":mail}
-            mydict2={"name":username}
-            cond=mycol.find_one(mydict)
-            cond2=mycol.find_one(mydict2)
+            
+            # Validate existing user
+            mydict = {"email": mail}
+            mydict2 = {"name": username}
+            cond = mycol.find_one(mydict)
+            cond2 = mycol.find_one(mydict2)
+            
             if cond:
-                flash("Email already exists","error")        
+                flash("Email already exists", "error")        
             elif cond2:
-                flash("Username already exists","error")        
+                flash("Username already exists", "error")        
             else:
+                # Secure password storage
                 password_bytes = password.encode("ascii")
                 base64_bytes = base64.b64encode(password_bytes)
                 base64_string = base64_bytes.decode("ascii")
+                
+                # Create new user
                 mydict = { "email": mail, "name": username, "pass": base64_string }
                 mycol.insert_one(mydict)
+                flash("Registration successful! Please login.", "success")
                 return redirect(url_for('login'))
         except Exception as e:
-            flash("Counld not reach the server")
-    return render_template("html/signup.html")
+            flash("Could not reach the server", "error")
+    
+    # Prevent caching of auth pages
+    response = make_response(render_template("html/signup.html"))
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 @app.route('/login', methods=["GET", "POST"])
 def login():
+    usr = request.cookies.get("usr")
+    if usr:
+        return redirect(url_for('home'))
+    
     if request.method == "POST":
         try:
             username = request.form.get("username")
             password = request.form.get("password")
+            
+            # Verify credentials
             password_bytes = password.encode("ascii")
             base64_bytes = base64.b64encode(password_bytes)
             base64_string = base64_bytes.decode("ascii")
-            mydict= {"name":username,"pass":base64_string}
-            find={"_id"}
-            id=mycol.find_one(mydict,find)    
-            if id:
-                y=list(id.values())
-                usr=str(y[0])
+            
+            mydict = {"name": username, "pass": base64_string}
+            user_data = mycol.find_one(mydict)
+            
+            if user_data:
+                # Create secure session
+                user_id = str(user_data['_id'])
                 res = make_response(redirect(url_for('home')))
-                res.set_cookie("usr", usr, max_age=3600, httponly=True)
+                res.set_cookie(
+                    "usr", 
+                    user_id, 
+                    max_age=3600, 
+                    httponly=True,
+                    secure=True,  # Only send over HTTPS
+                    samesite='Lax'  # Prevent CSRF
+                )
+                # Prevent caching of sensitive pages
+                res.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+                res.headers['Pragma'] = 'no-cache'
+                res.headers['Expires'] = '0'
                 return res
             else:
-                flash("USERNAME OR PASSWORD IS INVALID.","error")
+                flash("Invalid username or password", "error")
                 return render_template("html/index.html")
         except Exception as e:
-            flash("Counld not reach the server")
-    return render_template("html/index.html")
+            flash("Could not reach the server", "error")
+    
+    # Prevent caching of auth pages
+    response = make_response(render_template("html/index.html"))
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/')
 def home():
+   messages = session.pop('_flashes', [])
    return render_template("html/home_page.html")
 
 @app.route('/scan',methods=['GET','POST'])
@@ -73,6 +117,9 @@ def scan():
         usr=request.cookies.get("usr")
         if usr:
             target=request.form.get("target")
+            if (url_chk.check_url(target)):
+                flash(f"Sorry we Don't scan {target}")
+                return render_template("html/home_page.html")
             ping_result=test.ping(target)
             if ping_result.find("Failed")==0:
                 port_result="The host is down"
@@ -85,7 +132,7 @@ def scan():
         else:
             flash("Login/Signup to continue")
             return render_template("html/home_page.html")
-def send_to_file(usr,ta,r1,r2,tr):
+def send_to_file(usr,ta,r1,r2,tr=""):
     global i_id
     parsed_url = urlparse(ta)
     domain = parsed_url.hostname if parsed_url.hostname else ta
@@ -266,20 +313,10 @@ def update_password():
     return redirect(url_for("profile"))
 
 
-@app.route('/proxy')
-def proxy():
-    target = request.args.get('target')  # Get the user’s local website
-    if not target:
-        return "No target provided", 400
-
-    try:
-        response = requests.get(target, stream=True)
-
-        return Response(response.iter_content(), status=response.status_code, headers=dict(response.headers))
-
-    except requests.exceptions.RequestException as e:
-        return f"Error connecting to {target}: {str(e)}", 500
-
+@app.route("/t&c")
+def display_tc():
+    f=open("hecktot&c.txt","r")
+    return f
 
 if __name__ == '__main__':
     app.run( debug=True,port='1234',threaded=True)

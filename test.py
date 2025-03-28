@@ -6,7 +6,9 @@ from urllib.parse import urlparse
 def ping(target):
     parsed_url = urlparse(target)
     domain = parsed_url.hostname if parsed_url.hostname else target
-
+    if ':' in domain:
+        domain=domain.split(":")[0]
+        
     if domain.replace('.', '').isdigit():
         ip = domain
     else:

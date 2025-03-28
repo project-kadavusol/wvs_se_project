@@ -178,3 +178,8 @@ class SSTIScanner:
 def scan_application(target, depth=2):
     scanner = SSTIScanner()
     return scanner.scan_application(target, depth)
+
+'''
+target=input("Enter the url:")
+temp=scan_application(target,depth=2)
+print(temp)'''
