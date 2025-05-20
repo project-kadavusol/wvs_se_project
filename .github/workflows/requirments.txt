@@ -1,7 +1,0 @@
-requests
-pymongo
-flask
-PyPDF2
-sockets
-fpdf
-beautifilsoup4
